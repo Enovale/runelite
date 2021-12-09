@@ -50,7 +50,7 @@ public interface GpuPluginConfig extends Config
 	)
 	default int drawDistance()
 	{
-		return 25;
+		return 90;
 	}
 
 	@ConfigItem(

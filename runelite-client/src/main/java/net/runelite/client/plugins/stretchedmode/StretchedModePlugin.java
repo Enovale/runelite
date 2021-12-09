@@ -32,9 +32,16 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.api.events.ResizeableChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.input.KeyManager;
 import net.runelite.client.input.MouseManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.ClientToolbar;
+import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.HotkeyListener;
+import net.runelite.client.util.ImageUtil;
+
+import java.awt.image.BufferedImage;
 
 @PluginDescriptor(
 	name = "Stretched Mode",
@@ -48,16 +55,34 @@ public class StretchedModePlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private ClientToolbar clientToolbar;
+
+	@Inject
+	private ConfigManager configManager;
+
+	@Inject
 	private StretchedModeConfig config;
 
 	@Inject
 	private MouseManager mouseManager;
 
 	@Inject
+	private KeyManager keyManager;
+
+	@Inject
 	private TranslateMouseListener mouseListener;
 
 	@Inject
 	private TranslateMouseWheelListener mouseWheelListener;
+
+	private final HotkeyListener hotkeyListener = new HotkeyListener(() -> config.hotkey())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			toggleStretch();
+		}
+	};
 
 	@Provides
 	StretchedModeConfig provideConfig(ConfigManager configManager)
@@ -71,7 +96,20 @@ public class StretchedModePlugin extends Plugin
 		mouseManager.registerMouseListener(0, mouseListener);
 		mouseManager.registerMouseWheelListener(0, mouseWheelListener);
 
-		client.setStretchedEnabled(true);
+		keyManager.registerKeyListener(hotkeyListener);
+
+		final BufferedImage iconImage = ImageUtil.loadImageResource(getClass(), "open.png");
+
+		NavigationButton titleBarButton = NavigationButton.builder()
+				.tab(false)
+				.tooltip("Toggle Stretched Mode")
+				.icon(iconImage)
+				.onClick(this::toggleStretch)
+				.build();
+
+		clientToolbar.addNavigation(titleBarButton);
+
+		client.setStretchedEnabled(config.enableOnStart());
 		updateConfig();
 	}
 
@@ -99,6 +137,12 @@ public class StretchedModePlugin extends Plugin
 			return;
 		}
 
+		client.setStretchedEnabled(config.enableOnStart());
+		updateConfig();
+	}
+
+	private void toggleStretch() {
+		client.setStretchedEnabled(!client.isStretchedEnabled());
 		updateConfig();
 	}
 

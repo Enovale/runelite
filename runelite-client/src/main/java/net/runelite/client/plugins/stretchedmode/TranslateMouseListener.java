@@ -86,6 +86,10 @@ public class TranslateMouseListener implements MouseListener
 
 	private MouseEvent translateEvent(MouseEvent e)
 	{
+		if(!client.isStretchedEnabled()) {
+			return e;
+		}
+
 		Dimension stretchedDimensions = client.getStretchedDimensions();
 		Dimension realDimensions = client.getRealDimensions();
 

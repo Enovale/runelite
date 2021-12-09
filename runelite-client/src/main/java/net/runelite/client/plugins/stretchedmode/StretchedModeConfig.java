@@ -25,14 +25,20 @@
  */
 package net.runelite.client.plugins.stretchedmode;
 
-import net.runelite.client.config.Config;
-import net.runelite.client.config.ConfigGroup;
-import net.runelite.client.config.ConfigItem;
-import net.runelite.client.config.Units;
+import net.runelite.client.config.*;
 
 @ConfigGroup("stretchedmode")
 public interface StretchedModeConfig extends Config
 {
+	@ConfigItem(
+			keyName = "enableOnStart",
+			name = "Enable On Start",
+			description = "Whether or not stretching is enabled on startup (Independent of the plugin enable status)")
+	default boolean enableOnStart()
+	{
+		return true;
+	}
+
 	@ConfigItem(
 		keyName = "keepAspectRatio",
 		name = "Keep aspect ratio",
@@ -72,5 +78,15 @@ public interface StretchedModeConfig extends Config
 	default int scalingFactor()
 	{
 		return 50;
+	}
+
+	@ConfigItem(
+			keyName = "hotkey",
+			name = "Screenshot hotkey",
+			description = "When you press this key, stretched mode will be toggled."
+	)
+	default Keybind hotkey()
+	{
+		return Keybind.NOT_SET;
 	}
 }
