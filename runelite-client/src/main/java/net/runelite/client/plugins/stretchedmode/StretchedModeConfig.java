@@ -82,7 +82,7 @@ public interface StretchedModeConfig extends Config
 
 	@ConfigItem(
 			keyName = "hotkey",
-			name = "Screenshot hotkey",
+			name = "Stretched Mode Hotkey",
 			description = "When you press this key, stretched mode will be toggled."
 	)
 	default Keybind hotkey()
