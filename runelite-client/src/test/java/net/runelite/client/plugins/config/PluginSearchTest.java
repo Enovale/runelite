@@ -44,8 +44,6 @@ public class PluginSearchTest
 	public void setUp()
 	{
 		plugins = new HashMap<>();
-		plugins.put("Discord", new TestSearchablePlugin("Discord", false, "action", "activity", "external", "integration", "status"));
-		plugins.put("Emojis", new TestSearchablePlugin("Emojis", true, "replaces", "common", "emoticons"));
 		plugins.put("Grand Exchange", new TestSearchablePlugin("Grand Exchange", true, "external", "integration", "notifications", "panel", "prices", "trade"));
 		plugins.put("Status Bars", new TestSearchablePlugin("Status Bars", false, "Draws", "status", "bars"));
 	}
@@ -62,7 +60,7 @@ public class PluginSearchTest
 	{
 		List<SearchablePlugin> results = PluginSearch.search(plugins.values(), "sTATus");
 		assertThat(results, hasSize(2));
-		assertThat(results, containsInAnyOrder(plugins.get("Discord"), plugins.get("Status Bars")));
+		assertThat(results, containsInAnyOrder(plugins.get("Status Bars")));
 	}
 
 	@Test
@@ -76,7 +74,7 @@ public class PluginSearchTest
 	public void searchOrdersPinnedItemsFirstIfThereAreNoExactMatches()
 	{
 		List<SearchablePlugin> results = PluginSearch.search(plugins.values(), "integrat");
-		assertThat(results, contains(plugins.get("Grand Exchange"), plugins.get("Discord")));
+		assertThat(results, contains(plugins.get("Grand Exchange")));
 	}
 
 	private static class TestSearchablePlugin implements SearchablePlugin

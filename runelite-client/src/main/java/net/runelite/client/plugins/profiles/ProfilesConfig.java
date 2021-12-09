@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Charlie Waters
+ * Copyright (c) 2019, Spedwards <https://github.com/Spedwards>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,78 +22,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.itemprices;
+package net.runelite.client.plugins.profiles;
+
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("itemprices")
-public interface ItemPricesConfig extends Config
+@ConfigGroup("profiles")
+public interface ProfilesConfig extends Config
 {
+
 	@ConfigItem(
-		keyName = "showGEPrice",
-		name = "Show Grand Exchange Prices",
-		description = "Grand exchange prices should be shown on tooltips",
-		position = 1
+			keyName = "profilesData",
+			name = "",
+			description = "",
+			hidden = true
 	)
-	default boolean showGEPrice()
+	default String profilesData()
 	{
-		return true;
+		return "";
 	}
 
 	@ConfigItem(
-		keyName = "showHAValue",
-		name = "Show High Alchemy Values",
-		description = "High Alchemy values should be shown on tooltips",
-		position = 2
+			keyName = "profilesData",
+			name = "",
+			description = ""
 	)
-	default boolean showHAValue()
-	{
-		return true;
-	}
+	void profilesData(String str);
 
 	@ConfigItem(
-		keyName = "showEA",
-		name = "Show Price Each on Stacks",
-		description = "The price/value of each item should be shown on stacks",
-		position = 3
+			keyName = "streamerMode",
+			name = "Streamer Mode",
+			description = "Hides your account emails"
 	)
-	default boolean showEA()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-		keyName = "hideInventory",
-		name = "Hide Tooltips on Inventory Items",
-		description = "Tooltips should be hidden on items in the inventory",
-		position = 4
-	)
-	default boolean hideInventory()
+	default boolean isStreamerMode()
 	{
 		return false;
 	}
 
 	@ConfigItem(
-		keyName = "showAlchProfit",
-		name = "Show High Alchemy Profit",
-		description = "Show the profit from casting high alchemy on items",
-		position = 5
+			keyName = "autofillProfile",
+			name = "Profile Auto-Fill",
+			description = "Automatically fills in this profile on startup"
 	)
-	default boolean showAlchProfit()
+	default String getAutofillProfile()
 	{
-		return false;
+		return "";
 	}
 
 	@ConfigItem(
-		keyName = "showWhileAlching",
-		name = "Show prices while alching",
-		description = "Show the price overlay while using High Alchemy. Takes priority over \"Hide tooltips on Inventory Items\"",
-		position = 6
+			keyName = "fillOnLogout",
+			name = "Auto-Fill Always",
+			description = "Autofill even after a logout"
 	)
-	default boolean showWhileAlching()
-	{
-		return true;
-	}
+	default boolean fillOnLogout() { return false; }
 }

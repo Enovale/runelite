@@ -423,23 +423,6 @@ class PluginHubPanel extends PluginPanel
 			}
 		});
 
-		JLabel externalPluginWarning = new JLabel("<html>External plugins are verified to not be " +
-			"malicious or rule-breaking, but are not " +
-			"maintained by the RuneLite developers. " +
-			"They may cause bugs or instability.</html>");
-		externalPluginWarning.setBackground(new Color(0xFFBB33));
-		externalPluginWarning.setForeground(Color.BLACK);
-		externalPluginWarning.setBorder(new EmptyBorder(5, 5, 5, 2));
-		externalPluginWarning.setOpaque(true);
-
-		JLabel externalPluginWarning2 = new JLabel("Use at your own risk!");
-		externalPluginWarning2.setHorizontalAlignment(JLabel.CENTER);
-		externalPluginWarning2.setFont(FontManager.getRunescapeBoldFont());
-		externalPluginWarning2.setBackground(externalPluginWarning.getBackground());
-		externalPluginWarning2.setForeground(externalPluginWarning.getForeground());
-		externalPluginWarning2.setBorder(new EmptyBorder(0, 5, 5, 5));
-		externalPluginWarning2.setOpaque(true);
-
 		JButton backButton = new JButton(ConfigPanel.BACK_ICON);
 		backButton.setRolloverIcon(ConfigPanel.BACK_ICON_HOVER);
 		SwingUtil.removeButtonDecorations(backButton);
@@ -466,8 +449,6 @@ class PluginHubPanel extends PluginPanel
 		scrollPane.setViewportView(mainPanelWrapper);
 
 		layout.setVerticalGroup(layout.createSequentialGroup()
-			.addComponent(externalPluginWarning)
-			.addComponent(externalPluginWarning2)
 			.addGap(10)
 			.addGroup(layout.createParallelGroup()
 				.addComponent(backButton)
@@ -476,8 +457,6 @@ class PluginHubPanel extends PluginPanel
 			.addComponent(scrollPane));
 
 		layout.setHorizontalGroup(layout.createParallelGroup()
-			.addComponent(externalPluginWarning, 0, Short.MAX_VALUE, Short.MAX_VALUE)
-			.addComponent(externalPluginWarning2, 0, Short.MAX_VALUE, Short.MAX_VALUE)
 			.addGroup(layout.createSequentialGroup()
 				.addComponent(backButton)
 				.addComponent(searchBar)

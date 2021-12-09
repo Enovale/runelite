@@ -63,8 +63,6 @@ import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.discord.DiscordService;
-import net.runelite.client.discord.events.DiscordJoinRequest;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.OverlayMenuClicked;
 import net.runelite.client.events.ConfigChanged;
@@ -137,9 +135,6 @@ public class PartyPlugin extends Plugin
 
 	@Inject
 	private ClientToolbar clientToolbar;
-
-	@Inject
-	private DiscordService discordService;
 
 	@Inject
 	@Named("developerMode")
@@ -315,23 +310,6 @@ public class PartyPlugin extends Plugin
 	}
 
 	@Subscribe
-	public void onDiscordJoinRequest(DiscordJoinRequest request)
-	{
-		final String requestMessage = new ChatMessageBuilder()
-			.append(ChatColorType.HIGHLIGHT)
-			.append("New join request received. Check your Party panel.")
-			.build();
-
-		chatMessageManager.queue(QueuedMessage.builder()
-			.type(ChatMessageType.FRIENDSCHATNOTIFICATION)
-			.runeLiteFormattedMessage(requestMessage)
-			.build());
-
-		String userName = request.getUsername() + "#" + request.getDiscriminator();
-		SwingUtilities.invokeLater(() -> panel.addRequest(request.getUserId(), userName));
-	}
-
-	@Subscribe
 	public void onGameStateChanged(GameStateChanged event)
 	{
 		checkStateChanged(false);
@@ -339,7 +317,6 @@ public class PartyPlugin extends Plugin
 
 	public void replyToRequest(String userId, int reply)
 	{
-		discordService.respondToRequest(userId, reply);
 		panel.removeRequest(userId);
 	}
 
