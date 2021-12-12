@@ -59,7 +59,7 @@ public class PluginSearchTest
 	public void searchReturnsMatchingPlugins()
 	{
 		List<SearchablePlugin> results = PluginSearch.search(plugins.values(), "sTATus");
-		assertThat(results, hasSize(2));
+		assertThat(results, hasSize(1));
 		assertThat(results, containsInAnyOrder(plugins.get("Status Bars")));
 	}
 
