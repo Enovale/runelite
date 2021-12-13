@@ -348,6 +348,7 @@
 						<nonFilteredFileExtension>png</nonFilteredFileExtension>
 						<nonFilteredFileExtension>gif</nonFilteredFileExtension>
 						<nonFilteredFileExtension>wav</nonFilteredFileExtension>
+						<nonFilteredFileExtension>zip</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>
@@ -404,22 +405,20 @@
 						<goals>
 							<goal>assemble</goal>
 						</goals>
-						<configuration>
-							<scriptDirectory>src/main/scripts</scriptDirectory>
-							<outputDirectory>${project.build.outputDirectory}/runelite</outputDirectory>
-						</configuration>
 					</execution>
 					<execution>
 						<id>build-index</id>
 						<goals>
 							<goal>build-index</goal>
 						</goals>
-						<configuration>
-							<archiveOverlayDirectory>${project.build.outputDirectory}/runelite</archiveOverlayDirectory>
-							<indexFile>${project.build.outputDirectory}/runelite/index</indexFile>
-						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<archiveOverlayDirectory>${project.build.outputDirectory}/runelite</archiveOverlayDirectory>
+					<indexFile>${project.build.outputDirectory}/runelite/index</indexFile>
+					<scriptDirectory>src/main/scripts</scriptDirectory>
+					<outputDirectory>${project.build.outputDirectory}/runelite</outputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
