@@ -64,8 +64,8 @@ import net.runelite.client.chat.ChatMessageManager;
 import net.runelite.client.chat.QueuedMessage;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.OverlayMenuClicked;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.events.OverlayMenuClicked;
 import net.runelite.client.events.PartyChanged;
 import net.runelite.client.events.PartyMemberAvatar;
 import net.runelite.client.plugins.Plugin;
@@ -561,6 +561,11 @@ public class PartyPlugin extends Plugin
 		partyDataMap.clear();
 		pendingTilePings.clear();
 		worldMapManager.removeIf(PartyWorldMapPoint.class::isInstance);
+
+		if (event.getPartyId() != null)
+		{
+			config.setPreviousPartyId(String.valueOf(event.getPartyId()));
+		}
 
 		SwingUtilities.invokeLater(() ->
 		{
