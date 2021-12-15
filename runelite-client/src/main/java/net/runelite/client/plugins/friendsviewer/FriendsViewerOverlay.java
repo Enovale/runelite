@@ -28,11 +28,16 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import lombok.Setter;
 import net.runelite.api.Client;
+import net.runelite.api.Friend;
+import net.runelite.api.FriendContainer;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -43,6 +48,7 @@ import net.runelite.client.ui.overlay.components.LayoutableRenderableEntity;
 import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.SplitComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
+import net.runelite.client.util.Text;
 
 public class FriendsViewerOverlay extends OverlayPanel
 {
@@ -50,17 +56,19 @@ public class FriendsViewerOverlay extends OverlayPanel
 	private final FriendsViewerConfig config;
 	private final String title;
 	private final Supplier<Boolean> enabled;
+	private final Supplier<Boolean> friendsExempt;
 
 	@Getter
 	@Setter
 	private List<FriendsViewerEntry> entries;
 
-	public FriendsViewerOverlay(Client client, FriendsViewerConfig config, String title, Supplier<Boolean> enabled)
+	public FriendsViewerOverlay(Client client, FriendsViewerConfig config, String title, Supplier<Boolean> enabled, Supplier<Boolean> exemptFriends)
 	{
 		this.client = client;
 		this.config = config;
 		this.title = title;
 		this.enabled = enabled;
+		this.friendsExempt = exemptFriends;
 		setPosition(OverlayPosition.TOP_RIGHT);
 		panelComponent.setPreferredSize(new Dimension(ComponentConstants.STANDARD_WIDTH + FriendsViewerIconManager.IMAGE_DIMENSION.width, 0));
 	}
@@ -79,11 +87,18 @@ public class FriendsViewerOverlay extends OverlayPanel
 			return null;
 		}
 
+		final Friend[] friends = client.getFriendContainer().getMembers();
+		final List<FriendsViewerEntry> entriesToExclude = entries.stream()
+			.filter(entry -> Arrays.stream(friends)
+				.anyMatch(friend -> Text.toJagexName(friend.getName()).equals(entry.getName())))
+			.collect(Collectors.toList());
+
 		panelComponent.getChildren().add(TitleComponent.builder()
 			.text(String.format("%s (%d)", title, entries.size()))
 			.build());
 
 		entries.stream()
+			.filter(entry -> !friendsExempt.get() || !entriesToExclude.contains(entry))
 			.limit(config.maxPlayers())
 			.map(this::toRenderableEntity)
 			.forEach(panelComponent.getChildren()::add);
@@ -91,7 +106,7 @@ public class FriendsViewerOverlay extends OverlayPanel
 		if (entries.size() > config.maxPlayers())
 		{
 			panelComponent.getChildren().add(TitleComponent.builder()
-				.text(String.format("... %d more", entries.size() - config.maxPlayers()))
+				.text(String.format("... %d more", entries.size() - config.maxPlayers() + entriesToExclude.size()) + ((friendsExempt.get() && entriesToExclude.size() > 0) ? String.format(", including %d friends", entriesToExclude.size()) : ""))
 				.build());
 		}
 

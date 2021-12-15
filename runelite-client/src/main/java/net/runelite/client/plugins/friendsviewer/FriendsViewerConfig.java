@@ -90,13 +90,37 @@ public interface FriendsViewerConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "showGuestClan",
-		name = "Show Guest Clan",
-		description = "Show or hide Guest Clan overlay",
-		position = 4,
-		section = overlaysSection
+			keyName = "showGuestClan",
+			name = "Show Guest Clan",
+			description = "Show or hide Guest Clan overlay",
+			position = 4,
+			section = overlaysSection
 	)
 	default boolean showGuestClan()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "consolidateFriends",
+			name = "Consolidate Friends",
+			description = "Don't show individual friends in non-friends chats",
+			position = 5,
+			section = overlaysSection
+	)
+	default boolean hideFriends()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "playerWorldOnly",
+			name = "Exclude Other Worlds",
+			description = "Don't show users in a different world from your own",
+			position = 6,
+			section = overlaysSection
+	)
+	default boolean playerWorldOnly()
 	{
 		return false;
 	}
@@ -105,7 +129,7 @@ public interface FriendsViewerConfig extends Config
 		keyName = "fontSize",
 		name = "Font Size",
 		description = "Font size to use on the overlay",
-		position = 5,
+		position = 7,
 		section = overlaysSection
 	)
 	default FriendsViewerFontSize fontSize()

@@ -81,10 +81,10 @@ public class FriendsViewerPlugin extends Plugin
 			}
 		});
 
-		friendsOverlay = new FriendsViewerOverlay(client, config, "Friends", config::showFriends);
-		chatChannelOverlay = new FriendsViewerOverlay(client, config, "Chat-channel", config::showChatChannel);
-		yourClanOverlay = new FriendsViewerOverlay(client, config, "Your Clan", config::showYourClan);
-		guestClanOverlay = new FriendsViewerOverlay(client, config, "Guest Clan", config::showGuestClan);
+		friendsOverlay = new FriendsViewerOverlay(client, config, "Friends", config::showFriends, () -> false);
+		chatChannelOverlay = new FriendsViewerOverlay(client, config, "Chat-channel", config::showChatChannel, config::hideFriends);
+		yourClanOverlay = new FriendsViewerOverlay(client, config, "Your Clan", config::showYourClan, config::hideFriends);
+		guestClanOverlay = new FriendsViewerOverlay(client, config, "Guest Clan", config::showGuestClan, config::hideFriends);
 
 		overlayManager.add(friendsOverlay);
 		overlayManager.add(chatChannelOverlay);
@@ -148,6 +148,7 @@ public class FriendsViewerPlugin extends Plugin
 
 		friendsOverlay.setEntries(Arrays.stream(friendContainer.getMembers())
 			.filter(friend -> friend.getWorld() > 0)
+			.filter(friend -> !config.playerWorldOnly() || friend.getWorld() == client.getWorld())
 			.sorted(Comparator.comparing(Friend::getName, String::compareToIgnoreCase))
 			.map(friend -> new FriendsViewerEntry(Text.toJagexName(friend.getName()), friend.getWorld(), null))
 			.collect(Collectors.toList()));
@@ -164,6 +165,7 @@ public class FriendsViewerPlugin extends Plugin
 
 		chatChannelOverlay.setEntries(Arrays.stream(friendsChatManager.getMembers())
 			.filter(clanmate -> !Text.toJagexName(clanmate.getName()).equals(getLocalPlayerName()))
+			.filter(friend -> !config.playerWorldOnly() || friend.getWorld() == client.getWorld())
 			.sorted(Comparator.comparing(FriendsChatMember::getRank).reversed()
 				.thenComparing(FriendsChatMember::getName, String::compareToIgnoreCase))
 			.map(clanmate -> new FriendsViewerEntry(
@@ -183,6 +185,7 @@ public class FriendsViewerPlugin extends Plugin
 
 		overlay.setEntries(clanChannel.getMembers().stream()
 			.filter(clanmate -> !Text.toJagexName(clanmate.getName()).equals(getLocalPlayerName()))
+			.filter(friend -> !config.playerWorldOnly() || friend.getWorld() == client.getWorld())
 			.sorted(Comparator.comparing(ClanChannelMember::getRank).reversed()
 				.thenComparing(ClanChannelMember::getName, String::compareToIgnoreCase))
 			.map(clanmate -> new FriendsViewerEntry(

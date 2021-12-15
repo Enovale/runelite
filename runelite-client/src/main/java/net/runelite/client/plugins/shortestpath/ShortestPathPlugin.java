@@ -31,6 +31,7 @@ import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -76,7 +77,7 @@ public class ShortestPathPlugin extends Plugin {
     protected void startUp() {
         Map<SplitFlagMap.Position, byte[]> compressedRegions = new HashMap<>();
 
-        var stream = ShortestPathPlugin.class.getResourceAsStream("collision-map.zip");
+        InputStream stream = ShortestPathPlugin.class.getResourceAsStream("collision-map.zip");
         try (ZipInputStream in = new ZipInputStream(stream)) {
             ZipEntry entry;
             while ((entry = in.getNextEntry()) != null) {

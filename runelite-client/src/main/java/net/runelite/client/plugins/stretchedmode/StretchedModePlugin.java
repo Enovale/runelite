@@ -96,6 +96,7 @@ public class StretchedModePlugin extends Plugin
 		mouseManager.registerMouseListener(0, mouseListener);
 		mouseManager.registerMouseWheelListener(0, mouseWheelListener);
 
+		hotkeyListener.setEnabledOnLoginScreen(true);
 		keyManager.registerKeyListener(hotkeyListener);
 
 		final BufferedImage iconImage = ImageUtil.loadImageResource(getClass(), "open.png");
