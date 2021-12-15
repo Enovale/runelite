@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2021, molo-pl <https://github.com/molo-pl>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,34 +22,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.hiscore;
+package net.runelite.client.plugins.lastseen;
 
-import static net.runelite.client.plugins.hiscore.HiscorePanel.formatLevel;
-import net.runelite.client.hiscore.HiscoreEndpoint;
-import okhttp3.OkHttpClient;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import javax.inject.Inject;
+import lombok.Getter;
+import lombok.Setter;
+import net.runelite.api.Client;
+import net.runelite.client.ui.overlay.Overlay;
+import net.runelite.client.ui.overlay.tooltip.Tooltip;
+import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 
-public class HiscorePanelTest
+public class LastSeenOverlay extends Overlay
 {
-	@Test
-	public void testConstructor()
+	private final Client client;
+	private final TooltipManager tooltipManager;
+
+	@Getter
+	@Setter
+	private String tooltip;
+
+	@Inject
+	private LastSeenOverlay(Client client, TooltipManager tooltipManager)
 	{
-		HiscorePlugin plugin = mock(HiscorePlugin.class);
-		when(plugin.getWorldEndpoint()).thenReturn(HiscoreEndpoint.NORMAL);
-		new HiscorePanel(null, plugin, mock(HiscoreConfig.class),
-			mock(NameAutocompleter.class), mock(OkHttpClient.class));
+		this.client = client;
+		this.tooltipManager = tooltipManager;
 	}
 
-	@Test
-	public void testFormatLevel()
+	@Override
+	public Dimension render(Graphics2D graphics)
 	{
-		assertEquals("398", formatLevel(398));
-		assertEquals("5000", formatLevel(5000));
-		assertEquals("7682", formatLevel(7682));
-		assertEquals("12k", formatLevel(12398));
-		assertEquals("219k", formatLevel(219824));
+		if (!client.isMenuOpen() && tooltip != null)
+		{
+			tooltipManager.add(new Tooltip(tooltip));
+		}
+
+		return null;
 	}
 }
