@@ -31,11 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.Client;
-import net.runelite.api.Friend;
-import net.runelite.api.GameState;
-import net.runelite.api.Nameable;
-import net.runelite.api.NameableContainer;
+import net.runelite.api.*;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.MenuEntryAdded;
@@ -141,7 +137,7 @@ public class LastSeenPlugin extends Plugin
 			persistLastSeen();
 		}
 
-		final NameableContainer<Friend> friendContainer = client.getFriendContainer();
+		final FriendContainer friendContainer = client.getFriendContainer();
 		if (friendContainer == null)
 		{
 			return;
