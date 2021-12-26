@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2020, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,30 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.ui;
+package net.runelite.client.game;
 
-import java.applet.Applet;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.annotation.Nullable;
-import javax.swing.JPanel;
-import net.runelite.api.Constants;
+import lombok.Data;
 
-final class ClientPanel extends JPanel
+@Data
+public class NpcInfo
 {
-	public ClientPanel(@Nullable Applet client)
-	{
-		setSize(Constants.GAME_FIXED_SIZE);
-		setMinimumSize(Constants.GAME_FIXED_SIZE);
-		setPreferredSize(Constants.GAME_FIXED_SIZE);
-		setLayout(new BorderLayout());
-		setBackground(Color.black);
-
-		if (client == null)
-		{
-			return;
-		}
-
-		add(client, BorderLayout.CENTER);
-	}
+	private int hitpoints;
 }

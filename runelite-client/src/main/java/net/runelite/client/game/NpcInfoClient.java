@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2020, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,42 +22,69 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.cache.util;
+package net.runelite.client.game;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.inject.Inject;
+import javax.inject.Named;
+import lombok.extern.slf4j.Slf4j;
+import net.runelite.http.api.RuneLiteAPI;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-public class XteaKeyManager
+@Slf4j
+public class NpcInfoClient
 {
-	private static final Logger logger = LoggerFactory.getLogger(XteaKeyManager.class);
+	private final OkHttpClient client;
+	private final HttpUrl staticBase;
 
-	private final Map<Integer, int[]> keys = new HashMap<>();
-
-	public void loadKeys(InputStream in)
+	@Inject
+	private NpcInfoClient(OkHttpClient client, @Named("runelite.static.base") HttpUrl staticBase)
 	{
-		// CHECKSTYLE:OFF
-		List<XteaKey> k = new Gson()
-			.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), new TypeToken<List<XteaKey>>() { }.getType());
-		// CHECKSTYLE:ON
-
-		for (XteaKey key : k)
-		{
-			keys.put(key.getRegion(), key.getKeys());
-		}
-
-		logger.info("Loaded {} keys", keys.size());
+		this.client = client;
+		this.staticBase = staticBase;
 	}
 
-	public int[] getKeys(int region)
+	public Map<Integer, NpcInfo> getNpcs() throws IOException
 	{
-		return keys.get(region);
+		HttpUrl.Builder urlBuilder = staticBase.newBuilder()
+			.addPathSegment("npcs")
+			.addPathSegment("npcs.min.json");
+
+		HttpUrl url = urlBuilder.build();
+
+		log.debug("Built URI: {}", url);
+
+		Request request = new Request.Builder()
+			.url(url)
+			.build();
+
+		try (Response response = client.newCall(request).execute())
+		{
+			if (!response.isSuccessful())
+			{
+				log.warn("Error looking up npcs: {}", response);
+				return null;
+			}
+
+			InputStream in = response.body().byteStream();
+			final Type typeToken = new TypeToken<Map<Integer, NpcInfo>>()
+			{
+			}.getType();
+			return RuneLiteAPI.GSON.fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), typeToken);
+		}
+		catch (JsonParseException ex)
+		{
+			throw new IOException(ex);
+		}
 	}
 }

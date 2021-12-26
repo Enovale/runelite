@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016-2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2018, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,30 +22,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.ui;
+package net.runelite.client.plugins.xptracker;
 
-import java.applet.Applet;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.annotation.Nullable;
-import javax.swing.JPanel;
-import net.runelite.api.Constants;
+import java.io.IOException;
+import javax.inject.Inject;
+import javax.inject.Named;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-final class ClientPanel extends JPanel
+@Slf4j
+public class XpClient
 {
-	public ClientPanel(@Nullable Applet client)
+	private final OkHttpClient client;
+	private final HttpUrl apiBase;
+
+	@Inject
+	private XpClient(OkHttpClient client, @Named("runelite.api.base") HttpUrl apiBase)
 	{
-		setSize(Constants.GAME_FIXED_SIZE);
-		setMinimumSize(Constants.GAME_FIXED_SIZE);
-		setPreferredSize(Constants.GAME_FIXED_SIZE);
-		setLayout(new BorderLayout());
-		setBackground(Color.black);
+		this.client = client;
+		this.apiBase = apiBase;
+	}
 
-		if (client == null)
+	public void update(String username)
+	{
+		HttpUrl url = apiBase.newBuilder()
+			.addPathSegment("xp")
+			.addPathSegment("update")
+			.addQueryParameter("username", username)
+			.build();
+
+		Request request = new Request.Builder()
+			.url(url)
+			.build();
+
+		client.newCall(request).enqueue(new Callback()
 		{
-			return;
-		}
+			@Override
+			public void onFailure(Call call, IOException e)
+			{
+				log.warn("Error submitting xp track", e);
+			}
 
-		add(client, BorderLayout.CENTER);
+			@Override
+			public void onResponse(Call call, Response response)
+			{
+				response.close();
+				log.debug("Submitted xp track for {}", username);
+			}
+		});
 	}
 }
