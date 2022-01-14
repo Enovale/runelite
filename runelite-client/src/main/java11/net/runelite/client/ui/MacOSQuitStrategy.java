@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, Adam <Adam@sigterm.info>
+ * Copyright (c) 2022, Adam <Adam@sigterm.info>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,71 +22,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.api;
+package net.runelite.client.ui;
 
-/**
- * An enumeration of prayer icons above the head.
- */
-public enum HeadIcon
+import java.awt.Desktop;
+import java.awt.desktop.QuitStrategy;
+
+class MacOSQuitStrategy
 {
-	/**
-	 * Protect from melee.
-	 */
-	MELEE,
-	/**
-	 * Protect from ranged.
-	 */
-	RANGED,
-	/**
-	 * Protect from magic.
-	 */
-	MAGIC,
-	/**
-	 * Retribution prayer.
-	 */
-	RETRIBUTION,
-	/**
-	 * Smite prayer.
-	 */
-	SMITE,
-	/**
-	 * Redemption prayer.
-	 */
-	REDEMPTION,
-	/**
-	 * Protect from range and mage. (ie. used by Kalphite Queen)
-	 */
-	RANGE_MAGE,
-	/**
-	 * Protect from range and melee
-	 */
-	RANGE_MELEE,
-	/**
-	 * Protect from mage and melee
-	 */
-	MAGE_MELEE,
-	/**
-	 * Protect from range, mage, and melee
-	 */
-	RANGE_MAGE_MELEE,
-	/**
-	 * Wrath curse
-	 */
-	WRATH,
-	/**
-	 * Soult split curse
-	 */
-	SOUL_SPLIT,
-	/**
-	 * Deflect melee curse
-	 */
-	DEFLECT_MELEE,
-	/**
-	 * Deflect range curse
-	 */
-	DEFLECT_RANGE,
-	/**
-	 * Deflect magic curse
-	 */
-	DEFLECT_MAGE;
+	public static void setup()
+	{
+		Desktop.getDesktop()
+			.setQuitStrategy(QuitStrategy.CLOSE_ALL_WINDOWS);
+	}
 }
