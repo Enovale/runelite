@@ -99,7 +99,7 @@ import net.runelite.client.util.Text;
 @PluginDescriptor(
 	name = "Ground Items",
 	description = "Highlight ground items and/or show price information",
-	tags = {"grand", "exchange", "high", "alchemy", "prices", "highlight", "overlay"}
+	tags = {"grand", "exchange", "high", "alchemy", "prices", "highlight", "overlay", "lootbeam"}
 )
 public class GroundItemsPlugin extends Plugin
 {
@@ -140,7 +140,10 @@ public class GroundItemsPlugin extends Plugin
 	private List<String> highlightedItemsList = new CopyOnWriteArrayList<>();
 
 	@Inject
-	private GroundItemInputListener inputListener;
+	private GroundItemHotkeyListener hotkeyListener;
+
+	@Inject
+	private GroundItemMouseAdapter mouseAdapter;
 
 	@Inject
 	private MouseManager mouseManager;
@@ -191,8 +194,8 @@ public class GroundItemsPlugin extends Plugin
 	protected void startUp()
 	{
 		overlayManager.add(overlay);
-		mouseManager.registerMouseListener(inputListener);
-		keyManager.registerKeyListener(inputListener);
+		mouseManager.registerMouseListener(mouseAdapter);
+		keyManager.registerKeyListener(hotkeyListener);
 		executor.execute(this::reset);
 		lastUsedItem = -1;
 	}
@@ -201,8 +204,8 @@ public class GroundItemsPlugin extends Plugin
 	protected void shutDown()
 	{
 		overlayManager.remove(overlay);
-		mouseManager.unregisterMouseListener(inputListener);
-		keyManager.unregisterKeyListener(inputListener);
+		mouseManager.unregisterMouseListener(mouseAdapter);
+		keyManager.unregisterKeyListener(hotkeyListener);
 		highlightedItems.invalidateAll();
 		highlightedItems = null;
 		hiddenItems.invalidateAll();
@@ -791,12 +794,13 @@ public class GroundItemsPlugin extends Plugin
 		Lootbeam lootbeam = lootbeams.get(worldPoint);
 		if (lootbeam == null)
 		{
-			lootbeam = new Lootbeam(client, clientThread, worldPoint, color);
+			lootbeam = new Lootbeam(client, clientThread, worldPoint, color, config.lootbeamStyle());
 			lootbeams.put(worldPoint, lootbeam);
 		}
 		else
 		{
 			lootbeam.setColor(color);
+			lootbeam.setStyle(config.lootbeamStyle());
 		}
 	}
 

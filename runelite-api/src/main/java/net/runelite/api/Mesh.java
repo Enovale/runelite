@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017, Adam <Adam@sigterm.info>
+ * Copyright (c) 2022 Abex
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,49 @@
 package net.runelite.api;
 
 /**
- * Utility class used for mapping projectile IDs.
- * <p>
- * Note: This class is not complete and may be missing mapped IDs.
+ * A {@link Model} or {@link ModelData}
  */
-public final class ProjectileID
+public interface Mesh<T extends Mesh<T>>
 {
-	public static final int CANNONBALL = 53;
-	public static final int GRANITE_CANNONBALL = 1443;
-	public static final int TELEKINETIC_SPELL = 143;
-	public static final int ZALCANO_PROJECTILE_FIREBALL = 1728;
+	int getVerticesCount();
+	int[] getVerticesX();
+	int[] getVerticesY();
+	int[] getVerticesZ();
+
+	int getFaceCount();
+	int[] getFaceIndices1();
+	int[] getFaceIndices2();
+	int[] getFaceIndices3();
+	byte[] getFaceTransparencies();
+	short[] getFaceTextures();
+
+	/**
+	 * Rotates this model 90 degrees around the vertical axis.
+	 * {@link ModelData#cloneVertices()} should be called before calling this method
+	 */
+	T rotateY90Ccw();
+
+	/**
+	 * Rotates this model 180 degrees around the vertical axis.
+	 * {@link ModelData#cloneVertices()} should be called before calling this method
+	 */
+	T rotateY180Ccw();
+
+	/**
+	 * Rotates this model 270 degrees around the vertical axis.
+	 * {@link ModelData#cloneVertices()} should be called before calling this method
+	 */
+	T rotateY270Ccw();
+
+	/**
+	 * Offsets this model by the passed amount (1/128ths of a tile).
+	 * {@link ModelData#cloneVertices()} should be called before calling this method
+	 */
+	T translate(int x, int y, int z);
+
+	/**
+	 * Resizes this model by the passed amount (1/128ths).
+	 * {@link ModelData#cloneVertices()} should be called before calling this method
+	 */
+	T scale(int x, int y, int z);
 }
