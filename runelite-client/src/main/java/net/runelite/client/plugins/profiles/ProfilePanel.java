@@ -62,9 +62,9 @@ class ProfilePanel extends JPanel
 
     private final WorldService worldService;
 
-    ProfilePanel(final Client client, String data, ProfilesConfig config, WorldService worldservice)
+    ProfilePanel(ProfilesPanel parent, final Client client, String data, ProfilesConfig config, WorldService worldservice)
     {
-        worldService = worldservice;
+        this.worldService = worldservice;
         String[] parts = data.split(":");
         this.Label = parts[0];
         this.loginText = parts[1];
@@ -114,22 +114,96 @@ class ProfilePanel extends JPanel
 
         panelActions.add(delete, BorderLayout.EAST);
 
-        JLabel label = new JLabel();
-        label.setText(parts[0] + " (" + parts[2] + ")");
-        label.setBorder(null);
-        label.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-        label.setPreferredSize(new Dimension(0, 24));
-        label.setForeground(Color.WHITE);
-        label.setBorder(new EmptyBorder(0, 8, 0, 0));
+        JLabel nameLabel = new JLabel(parts[0]);
+        nameLabel.setBorder(null);
+        nameLabel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        nameLabel.setPreferredSize(new Dimension(0, 24));
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setBorder(new EmptyBorder(0, 8, 0, 0));
+        nameLabel.addMouseListener(new MouseAdapter()
+        {
+            public void mouseClicked(MouseEvent e)
+            {
+                String name = JOptionPane.showInputDialog(null,
+                        "Input the new name for this profile: ", "Profiles", JOptionPane.INFORMATION_MESSAGE);
 
-        labelWrapper.add(label, BorderLayout.CENTER);
+                config.profilesData(config.profilesData().replace(data,
+                        data.replace(panel.Label + ":" + loginText + ":" + worldText + ":" + passwordText + ":" + "0",
+                                name + ":" + loginText + ":" + worldText + ":" + passwordText + ":" + "0")));
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+                nameLabel.setForeground(Color.BLUE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                nameLabel.setForeground(Color.WHITE);
+            }
+        });
+
+        JLabel worldLabel = new JLabel("(" + parts[2] + ")");
+        worldLabel.setBorder(null);
+        worldLabel.setBackground(ColorScheme.DARKER_GRAY_COLOR);
+        worldLabel.setPreferredSize(new Dimension(0, 24));
+        worldLabel.setForeground(Color.WHITE);
+        worldLabel.setBorder(new EmptyBorder(0, 8, 0, 0));
+        worldLabel.addMouseListener(new MouseAdapter()
+        {
+            public void mouseClicked(MouseEvent e)
+            {
+                String world = JOptionPane.showInputDialog(null,
+                        "Input the Default World", "Profiles", JOptionPane.INFORMATION_MESSAGE);
+
+                try {
+                    var worldInt = Integer.parseInt(world);
+                    config.profilesData(config.profilesData().replace(data,
+                            data.replace(panel.Label + ":" + loginText + ":" + worldText + ":" + passwordText + ":" + "0",
+                                    panel.Label + ":" + loginText + ":" + worldInt + ":" + passwordText + ":" + "0")));
+                } catch (NumberFormatException error) {
+                    log.error("Invalid World Format");
+                }
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+                worldLabel.setForeground(Color.BLUE);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                worldLabel.setForeground(Color.WHITE);
+            }
+        });
+
+        JPanel titleBar = new JPanel();
+        var layout = new GroupLayout(titleBar);
+        titleBar.setLayout(layout);
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                        .addComponent(nameLabel)
+                        .addComponent(worldLabel)
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING))
+        );
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                .addComponent(nameLabel)
+                                .addComponent(worldLabel))
+        );
+        labelWrapper.add(titleBar, BorderLayout.CENTER);
         labelWrapper.add(panelActions, BorderLayout.EAST);
-        label.addMouseListener(new MouseAdapter()
+        nameLabel.addMouseListener(new MouseAdapter()
         {
             @Override
             public void mousePressed(MouseEvent e)
             {
-                if(SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
                     Login(client);
                 }
             }
@@ -143,7 +217,7 @@ class ProfilePanel extends JPanel
             @Override
             public void mousePressed(MouseEvent e)
             {
-                if(SwingUtilities.isLeftMouseButton(e)) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
                     Login(client);
                 }
             }
@@ -171,14 +245,14 @@ class ProfilePanel extends JPanel
         add(bottomContainer, BorderLayout.CENTER);
     }
 
-    public void Login(final Client client) {
-        if (client.getGameState() == GameState.LOGIN_SCREEN)
-        {
+    public void Login(final Client client)
+    {
+        if (client.getGameState() == GameState.LOGIN_SCREEN) {
             client.setUsername(loginText);
             client.setPassword(passwordText);
-            if(worldText.length() == 3) {
+            if (worldText.length() == 3) {
                 Integer worldInt = Integer.parseInt(worldText);
-                if(ProfilesPlugin.CorrectWorld(worldInt) == 0) {
+                if (ProfilesPlugin.CorrectWorld(worldInt) == 0) {
                     log.error("Bad World ID entered into profile " + this.Label + "!");
                     return;
                 }
@@ -187,8 +261,7 @@ class ProfilePanel extends JPanel
                     return;
                 }
                 World world = worldService.getWorlds().findWorld(worldInt);
-                if (world == null)
-                {
+                if (world == null) {
                     return;
                 }
 

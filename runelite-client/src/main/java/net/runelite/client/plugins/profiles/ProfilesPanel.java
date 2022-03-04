@@ -305,7 +305,7 @@ class ProfilesPanel extends PluginPanel
 
     private void addAccount(String data)
     {
-        ProfilePanel profile = new ProfilePanel(client, data, profilesConfig, worldService);
+        ProfilePanel profile = new ProfilePanel(this, client, data, profilesConfig, worldService);
         c.gridy++;
         profilesPanel.add(profile, c);
 
