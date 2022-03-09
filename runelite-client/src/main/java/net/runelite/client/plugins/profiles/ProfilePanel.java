@@ -159,7 +159,7 @@ class ProfilePanel extends JPanel
                         "Input the Default World", "Profiles", JOptionPane.INFORMATION_MESSAGE);
 
                 try {
-                    var worldInt = Integer.parseInt(world);
+                    int worldInt = Integer.parseInt(world);
                     config.profilesData(config.profilesData().replace(data,
                             data.replace(panel.Label + ":" + loginText + ":" + worldText + ":" + passwordText + ":" + "0",
                                     panel.Label + ":" + loginText + ":" + worldInt + ":" + passwordText + ":" + "0")));
@@ -182,7 +182,7 @@ class ProfilePanel extends JPanel
         });
 
         JPanel titleBar = new JPanel();
-        var layout = new GroupLayout(titleBar);
+        GroupLayout layout = new GroupLayout(titleBar);
         titleBar.setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
